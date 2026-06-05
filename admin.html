@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BharatNews Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --blue: #0B3D91;
+  --blue-dark: #072d6e;
+  --blue-light: #e8eef8;
+  --saffron: #FF6B00;
+  --green: #138808;
+  --red: #c0392b;
+  --red-light: #fdecea;
+  --white: #ffffff;
+  --bg: #f0f2f8;
+  --text-dark: #1a1a2e;
+  --text-mid: #444;
+  --text-light: #777;
+  --border: #e0e4ea;
+  --shadow: 0 2px 12px rgba(11,61,145,0.09);
+  --radius: 8px;
+  --font: 'Poppins', sans-serif;
+  --sidebar-w: 240px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text-dark); font-size: 14px; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { display: block; }
+
+/* ── LOGIN SCREEN ─────────────────────────────────────────── */
+#loginScreen {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 100%);
+}
+.login-card {
+  background: var(--white); border-radius: 12px;
+  padding: 44px 40px; width: 100%; max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+.login-logo-icon {
+  width: 48px; height: 48px; background: var(--blue);
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 1.3rem; font-weight: 800;
+  color: #fff; position: relative; overflow: hidden;
+}
+.login-logo-icon::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 5px; background: var(--saffron);
+}
+.login-logo-text strong { display: block; font-size: 1.4rem; font-weight: 800; color: var(--blue); }
+.login-logo-text small { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; }
+.login-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.login-sub { font-size: 0.82rem; color: var(--text-light); margin-bottom: 24px; }
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; color: var(--text-mid); }
+.login-field input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+  border-radius: 7px; font-family: var(--font); font-size: 0.88rem;
+  outline: none; transition: border-color 0.2s;
+}
+.login-field input:focus { border-color: var(--blue); }
+.login-err { color: var(--red); font-size: 0.78rem; margin-bottom: 12px; display: none; }
+.login-btn {
+  width: 100%; background: var(--blue); color: #fff;
+  border: none; padding: 12px; border-radius: 7px;
+  font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  font-family: var(--font); transition: background 0.2s;
+}
+.login-btn:hover { background: var(--saffron); }
+
+/* ── LAYOUT ───────────────────────────────────────────────── */
+#adminApp { display: none; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w); background: var(--blue-dark);
+  color: #fff; display: flex; flex-direction: column; z-index: 50;
+}
+.sidebar-brand {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand strong { display: block; font-size: 1.1rem; font-weight: 800; }
+.sidebar-brand small { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.1em; }
+.sidebar-nav { flex: 1; padding: 16px 0; }
+.nav-section-label {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  padding: 14px 18px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; font-size: 0.83rem; font-weight: 500;
+  color: rgba(255,255,255,0.7); cursor: pointer;
+  transition: background 0.2s, color 0.2s; border-left: 3px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: var(--saffron); }
+.nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.logout-btn {
+  width: 100%; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.15); padding: 9px;
+  border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+  font-family: var(--font); transition: background 0.2s;
+}
+.logout-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* Main content */
+.main { margin-left: var(--sidebar-w); padding: 28px 32px; min-height: 100vh; }
+
+/* Top bar */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.topbar-title { font-size: 1.4rem; font-weight: 700; }
+.topbar-title span { color: var(--saffron); }
+
+/* Stats cards */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--white); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 16px;
+}
+.stat-icon {
+  width: 50px; height: 50px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.stat-icon.blue { background: var(--blue-light); }
+.stat-icon.saffron { background: #fff3e8; }
+.stat-icon.green { background: #e8f5e9; }
+.stat-icon.red { background: var(--red-light); }
+.stat-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat-label { font-size: 0.75rem; color: var(--text-light); margin-top: 3px; }
+
+/* Section panels */
+.panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+}
+.panel-title { font-size: 1rem; font-weight: 700; }
+.panel-body { padding: 22px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 6px; font-size: 0.8rem;
+  font-weight: 600; cursor: pointer; border: none;
+  font-family: var(--font); transition: opacity 0.2s, background 0.2s;
+}
+.btn:hover { opacity: 0.88; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-saffron { background: var(--saffron); color: #fff; }
+.btn-green   { background: var(--green); color: #fff; }
+.btn-red     { background: var(--red); color: #fff; }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text-mid); }
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); opacity: 1; }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.78rem; font-weight: 600; color: var(--text-mid); }
+.form-input, .form-select, .form-textarea {
+  padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 6px; font-family: var(--font); font-size: 0.85rem;
+  color: var(--text-dark); outline: none; transition: border-color 0.2s;
+  background: var(--bg);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--blue); background: #fff;
+}
+.form-textarea { resize: vertical; min-height: 160px; }
+.form-actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* Image preview */
+.img-preview {
+  width: 100%; height: 180px; border-radius: 6px; object-fit: cover;
+  border: 1.5px solid var(--border); background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-light); font-size: 0.82rem; overflow: hidden;
+}
+.img-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: var(--bg); padding: 10px 14px;
+  text-align: left; font-size: 0.75rem; font-weight: 600;
+  color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+}
+td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.83rem; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbff; }
+.td-title { font-weight: 600; max-width: 280px; }
+.td-title a { color: var(--blue); }
+.td-title a:hover { color: var(--saffron); }
+.badge {
+  display: inline-block; padding: 3px 9px; border-radius: 20px;
+  font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+}
+.badge-published { background: #e8f5e9; color: var(--green); }
+.badge-pending   { background: #fff3e8; color: var(--saffron); }
+.badge-approved  { background: #e8f5e9; color: var(--green); }
+.badge-rejected  { background: var(--red-light); color: var(--red); }
+.td-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--text-dark); color: #fff;
+  padding: 12px 20px; border-radius: 8px; font-size: 0.85rem;
+  font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transform: translateY(80px); opacity: 0;
+  transition: transform 0.3s, opacity 0.3s; z-index: 999;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--green); }
+.toast.error   { background: var(--red); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; display: none;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border-radius: 10px;
+  padding: 28px; max-width: 420px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h3 { font-size: 1.1rem; margin-bottom: 10px; }
+.modal p { color: var(--text-mid); font-size: 0.88rem; margin-bottom: 22px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-light); }
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.88rem; }
+
+/* Tab switcher inside a page */
+.tab-bar { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 22px; }
+.tab-btn {
+  padding: 8px 18px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; border: none; background: none;
+  font-family: var(--font); color: var(--text-light);
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color 0.2s;
+}
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* Screens */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* Spinner */
+.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">BN</div>
+      <div class="login-logo-text">
+        <strong>BharatNews</strong>
+        <small>Admin Panel</small>
+      </div>
+    </div>
+    <div class="login-title">Welcome back 👋</div>
+    <div class="login-sub">Sign in to manage your news website</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <div class="login-err" id="loginErr">❌ Incorrect username or password</div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ADMIN APP
+══════════════════════════════════════════════════ -->
+<div id="adminApp">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <strong>BharatNews</strong>
+      <small>Admin Panel</small>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="showScreen('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showScreen('articles')">
+        <span class="icon">📰</span> Articles
+      </div>
+      <div class="nav-item" onclick="showScreen('addArticle')">
+        <span class="icon">➕</span> Add Article
+      </div>
+      <div class="nav-section-label">Moderation</div>
+      <div class="nav-item" onclick="showScreen('comments')">
+        <span class="icon">💬</span> Comments
+      </div>
+      <div class="nav-section-label">Site</div>
+      <div class="nav-item" onclick="window.open('bharatnews.html','_blank')">
+        <span class="icon">🌐</span> View Website
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── DASHBOARD ────────────────────────────────── -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="topbar">
+        <div class="topbar-title">Dashboard <span>Overview</span></div>
+        <div style="font-size:0.8rem;color:var(--text-light)" id="dashDate"></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">📰</div>
+          <div>
+            <div class="stat-num" id="statArticles">—</div>
+            <div class="stat-label">Total Articles</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon saffron">💬</div>
+          <div>
+            <div class="stat-num" id="statComments">—</div>
+            <div class="stat-label">Total Comments</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div>
+            <div class="stat-num" id="statApproved">—</div>
+            <div class="stat-label">Approved Comments</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">⏳</div>
+          <div>
+            <div class="stat-num" id="statPending">—</div>
+            <div class="stat-label">Pending Comments</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Articles</div>
+          <button class="btn btn-primary btn-sm" onclick="showScreen('addArticle')">+ Add New</button>
+        </div>
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table id="dashTable">
+              <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="dashTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ALL ARTICLES ──────────────────────────────── -->
+    <div class="screen" id="screen-articles">
+      <div class="topbar">
+        <div class="topbar-title">Articles <span>Manager</span></div>
+        <button class="btn btn-primary" onclick="showScreen('addArticle')">+ Add Article</button>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="articlesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADD / EDIT ARTICLE ────────────────────────── -->
+    <div class="screen" id="screen-addArticle">
+      <div class="topbar">
+        <div class="topbar-title" id="articleFormTitle">Add <span>New Article</span></div>
+        <button class="btn btn-outline" onclick="showScreen('articles')">← Back</button>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <input type="hidden" id="editArticleId" />
+          <div class="form-grid">
+
+            <div class="form-group full">
+              <label>Article Title *</label>
+              <input class="form-input" id="fTitle" placeholder="Enter the full article headline..." />
+            </div>
+
+            <div class="form-group">
+              <label>Category *</label>
+              <select class="form-select" id="fCategory">
+                <option value="">— Select Category —</option>
+                <option>India</option>
+                <option>World</option>
+                <option>Politics</option>
+                <option>Business</option>
+                <option>Technology</option>
+                <option>Sports</option>
+                <option>Entertainment</option>
+                <option>Health</option>
+                <option>Science</option>
+                <option>Opinion</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Author Name</label>
+              <input class="form-input" id="fAuthor" placeholder="e.g. Priya Sharma" />
+            </div>
+
+            <div class="form-group full">
+              <label>Image URL</label>
+              <input class="form-input" id="fImageUrl" placeholder="https://example.com/image.jpg" oninput="previewImage()" />
+            </div>
+
+            <div class="form-group full">
+              <label>Image Preview</label>
+              <div class="img-preview" id="imgPreview">
+                <span>Enter an image URL above to preview</span>
+              </div>
+            </div>
+
+            <div class="form-group full">
+              <label>Article Content *</label>
+              <textarea class="form-textarea" id="fContent" rows="10"
+                placeholder="Write the full article here. Each new line will become a separate paragraph on the article page..."></textarea>
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="saveArticle()" id="saveBtn">💾 Save Article</button>
+            <button class="btn btn-outline" onclick="clearForm()">🗑 Clear Form</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMMENTS ──────────────────────────────────── -->
+    <div class="screen" id="screen-comments">
+      <div class="topbar">
+        <div class="topbar-title">Comments <span>Moderation</span></div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="tab-bar">
+            <button class="tab-btn active" onclick="filterComments('pending', this)">⏳ Pending</button>
+            <button class="tab-btn" onclick="filterComments('approved', this)">✅ Approved</button>
+            <button class="tab-btn" onclick="filterComments('all', this)">All</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Author</th><th>Comment</th><th>Article ID</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="commentsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>🗑 Delete Article?</h3>
+    <p>This action cannot be undone. The article will be permanently removed from your database.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+/* ── SUPABASE ─────────────────────────────────────── */
+const SUPABASE_URL = "https://zywoiaqbdiaaslyyvngb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_iL167xuGu2q-tww13f7AUA_JmyFJtBh";
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ── SIMPLE AUTH (change these credentials!) ──────── */
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "bharatnews2026";
+
+/* ── LOGIN ────────────────────────────────────────── */
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    sessionStorage.setItem('bn_admin', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('bn_admin');
+  location.reload();
+}
+
+// Auto-login if already logged in
+if (sessionStorage.getItem('bn_admin')) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'block';
+  initAdmin();
+}
+
+/* ── SCREEN ROUTING ───────────────────────────────── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(name.toLowerCase().replace('addarticle','add'))) {
+      n.classList.add('active');
+    }
+  });
+
+  if (name === 'dashboard')   loadDashboard();
+  if (name === 'articles')    loadArticlesTable();
+  if (name === 'addArticle')  resetFormForAdd();
+  if (name === 'comments')    loadComments('pending');
+}
+
+/* ── INIT ─────────────────────────────────────────── */
+function initAdmin() {
+  // Live date
+  const d = new Date();
+  const el = document.getElementById('dashDate');
+  if (el) el.textContent = d.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  loadDashboard();
+}
+
+/* ── TOAST ────────────────────────────────────────── */
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+/* ── FORMAT DATE ──────────────────────────────────── */
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════════ */
+async function loadDashboard() {
+  // Articles count
+  const { count: aCount } = await sb.from('articles').select('*', { count:'exact', head:true });
+  document.getElementById('statArticles').textContent = aCount ?? 0;
+
+  // Comments counts
+  const { count: cAll }     = await sb.from('comments').select('*', { count:'exact', head:true });
+  const { count: cApproved} = await sb.from('comments').select('*', { count:'exact', head:true }).eq('approved', true);
+  const pending = (cAll ?? 0) - (cApproved ?? 0);
+
+  document.getElementById('statComments').textContent = cAll ?? 0;
+  document.getElementById('statApproved').textContent = cApproved ?? 0;
+  document.getElementById('statPending').textContent  = pending;
+
+  // Recent articles table
+  const { data } = await sb.from('articles').select('*').order('id', { ascending: false }).limit(6);
+  const tbody = document.getElementById('dashTableBody');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">📭</div><p>No articles yet. Add your first one!</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td class="td-title"><a href="article.html?id=${a.id}" target="_blank">${a.title}</a></td>
+      <td>${a.category || '—'}</td>
+      <td>${fmtDate(a.created_at)}</td>
+      <td class="td-actions">
+        <button class="btn btn-outline btn-sm" onclick="editArticle(${a.id})">✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="openDeleteModal(${a.id})">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════════════
+   ARTICLES TABLE
+══════════════════════════════════════════════════ */
+async function loadArticlesTable() {
+  const { data } = await sb.from('articles').select('*').order('id', { ascending: false });
+  const tbody = document.getElementById('articlesTableBody');
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><p>No articles yet.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td style="color:var(--text-light)">#${a.id}</td>
+      <td class="td-title"><a href="article.html?id=${a.id}" target="_blank">${a.title}</a></td>
+      <td>${a.category || '—'}</td>
+      <td>${fmtDate(a.created_at)}</td>
+      <td class="td-actions">
+        <button class="btn btn-outline btn-sm" onclick="editArticle(${a.id})">✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="openDeleteModal(${a.id})">🗑 Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════════════
+   ADD / EDIT ARTICLE
+══════════════════════════════════════════════════ */
+function resetFormForAdd() {
+  document.getElementById('editArticleId').value = '';
+  document.getElementById('articleFormTitle').innerHTML = 'Add <span>New Article</span>';
+  document.getElementById('saveBtn').textContent = '💾 Save Article';
+  clearForm();
+}
+
+function clearForm() {
+  ['fTitle','fCategory','fAuthor','fImageUrl','fContent'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('imgPreview').innerHTML = '<span>Enter an image URL above to preview</span>';
+  document.getElementById('editArticleId').value = '';
+}
+
+function previewImage() {
+  const url = document.getElementById('fImageUrl').value.trim();
+  const prev = document.getElementById('imgPreview');
+  if (url) {
+    prev.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='<span>⚠️ Could not load image</span>'" />`;
+  } else {
+    prev.innerHTML = '<span>Enter an image URL above to preview</span>';
+  }
+}
+
+async function editArticle(id) {
+  const { data, error } = await sb.from('articles').select('*').eq('id', id).single();
+  if (error || !data) { showToast('Could not load article', 'error'); return; }
+
+  showScreen('addArticle');
+  document.getElementById('editArticleId').value = data.id;
+  document.getElementById('articleFormTitle').innerHTML = 'Edit <span>Article</span>';
+  document.getElementById('saveBtn').textContent = '💾 Update Article';
+  document.getElementById('fTitle').value    = data.title || '';
+  document.getElementById('fCategory').value = data.category || '';
+  document.getElementById('fAuthor').value   = data.author || '';
+  document.getElementById('fImageUrl').value = data.image_url || '';
+  document.getElementById('fContent').value  = data.content || '';
+  previewImage();
+}
+
+async function saveArticle() {
+  const title    = document.getElementById('fTitle').value.trim();
+  const category = document.getElementById('fCategory').value;
+  const author   = document.getElementById('fAuthor').value.trim();
+  const imageUrl = document.getElementById('fImageUrl').value.trim();
+  const content  = document.getElementById('fContent').value.trim();
+  const editId   = document.getElementById('editArticleId').value;
+
+  if (!title)    { showToast('Please enter a title', 'error'); return; }
+  if (!category) { showToast('Please select a category', 'error'); return; }
+  if (!content)  { showToast('Please enter article content', 'error'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+  btn.disabled = true;
+
+  const payload = { title, category, author, image_url: imageUrl, content };
+
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('articles').update(payload).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('articles').insert(payload));
+  }
+
+  btn.innerHTML = editId ? '💾 Update Article' : '💾 Save Article';
+  btn.disabled = false;
+
+  if (error) {
+    showToast('Error saving article: ' + error.message, 'error');
+    return;
+  }
+
+  showToast(editId ? '✅ Article updated!' : '✅ Article published!', 'success');
+  clearForm();
+  showScreen('articles');
+}
+
+/* ══════════════════════════════════════════════════
+   DELETE ARTICLE
+══════════════════════════════════════════════════ */
+let _deleteId = null;
+
+function openDeleteModal(id) {
+  _deleteId = id;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+  _deleteId = null;
+  document.getElementById('deleteModal').classList.remove('open');
+}
+async function confirmDelete() {
+  if (!_deleteId) return;
+  const { error } = await sb.from('articles').delete().eq('id', _deleteId);
+  closeModal();
+  if (error) { showToast('Error deleting article', 'error'); return; }
+  showToast('🗑 Article deleted', '');
+  loadDashboard();
+  loadArticlesTable();
+}
+
+/* ══════════════════════════════════════════════════
+   COMMENTS MODERATION
+══════════════════════════════════════════════════ */
+let _currentCommentFilter = 'pending';
+
+async function loadComments(filter) {
+  _currentCommentFilter = filter;
+  let query = sb.from('comments').select('*').order('created_at', { ascending: false });
+
+  if (filter === 'pending')  query = query.eq('approved', false);
+  if (filter === 'approved') query = query.eq('approved', true);
+
+  const { data, error } = await query;
+  const tbody = document.getElementById('commentsTableBody');
+
+  if (error) { tbody.innerHTML = `<tr><td colspan="6">Error loading comments</td></tr>`; return; }
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💬</div><p>No ${filter === 'all' ? '' : filter} comments found.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><strong>${c.author}</strong><br><span style="font-size:0.72rem;color:var(--text-light)">${c.email}</span></td>
+      <td style="max-width:240px">${c.content}</td>
+      <td>#${c.article_id}</td>
+      <td>${fmtDate(c.created_at)}</td>
+      <td><span class="badge ${c.approved ? 'badge-approved' : 'badge-pending'}">${c.approved ? 'Approved' : 'Pending'}</span></td>
+      <td class="td-actions">
+        ${!c.approved ? `<button class="btn btn-green btn-sm" onclick="approveComment(${c.id})">✅ Approve</button>` : ''}
+        <button class="btn btn-red btn-sm" onclick="deleteComment(${c.id})">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterComments(filter, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadComments(filter);
+}
+
+async function approveComment(id) {
+  const { error } = await sb.from('comments').update({ approved: true }).eq('id', id);
+  if (error) { showToast('Error approving comment', 'error'); return; }
+  showToast('✅ Comment approved!', 'success');
+  loadComments(_currentCommentFilter);
+}
+
+async function deleteComment(id) {
+  if (!confirm('Delete this comment?')) return;
+  const { error } = await sb.from('comments').delete().eq('id', id);
+  if (error) { showToast('Error deleting comment', 'error'); return; }
+  showToast('🗑 Comment deleted', '');
+  loadComments(_currentCommentFilter);
+}
+
+</script>
+</body>
+</html>
