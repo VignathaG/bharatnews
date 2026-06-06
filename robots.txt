@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://bharatnews-ashy.vercel.app/sitemap.xml
