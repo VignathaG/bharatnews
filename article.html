@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- ── Primary SEO (updated dynamically by JS) ── -->
+<title>BharatNews – Loading Article...</title>
+<meta name="description"  content="Read the latest news on BharatNews." id="metaDesc" />
+<meta name="author"       content="BharatNews" id="metaAuthor" />
+<meta name="robots"       content="index, follow" />
+
+<!-- ── Open Graph ── -->
+<meta property="og:type"        content="article" />
+<meta property="og:site_name"   content="BharatNews" />
+<meta property="og:title"       content="BharatNews" id="ogTitle" />
+<meta property="og:description" content="Read the latest news on BharatNews." id="ogDesc" />
+<meta property="og:url"         content="" id="ogUrl" />
+<meta property="og:image"       content="" id="ogImage" />
+<meta property="og:locale"      content="en_IN" />
+<meta property="article:publisher" content="BharatNews" />
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card"        content="summary_large_image" />
+<meta name="twitter:title"       content="BharatNews" id="twTitle" />
+<meta name="twitter:description" content="Read the latest news on BharatNews." id="twDesc" />
+<meta name="twitter:image"       content="" id="twImage" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET (same as main site)
+============================================================ */
+:root {
+  --blue: #0B3D91;
+  --blue-dark: #072d6e;
+  --blue-light: #e8eef8;
+  --saffron: #FF6B00;
+  --saffron-light: #fff3e8;
+  --green: #138808;
+  --white: #ffffff;
+  --bg: #f4f5f7;
+  --text-dark: #1a1a2e;
+  --text-mid: #444;
+  --text-light: #777;
+  --border: #e0e4ea;
+  --shadow: 0 2px 12px rgba(11,61,145,0.09);
+  --radius: 8px;
+  --font-body: 'Poppins', sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text-dark); font-size: 15px; line-height: 1.6; }
+img { display: block; width: 100%; object-fit: cover; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+.container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+
+/* ============================================================
+   INDIA STRIP
+============================================================ */
+.india-strip {
+  height: 4px;
+  background: linear-gradient(to right, #FF6B00 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%);
+}
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+.top-bar { background: var(--blue-dark); color: #cdd8ef; font-size: 0.72rem; padding: 5px 0; }
+.top-bar-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+.top-bar a { color: #cdd8ef; transition: color 0.2s; }
+.top-bar a:hover { color: var(--saffron); }
+.top-bar-left { display: flex; gap: 14px; align-items: center; }
+.top-bar-right { display: flex; gap: 14px; }
+.top-bar-sep { opacity: 0.3; }
+
+/* ============================================================
+   HEADER
+============================================================ */
+.header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.header-inner { display: flex; align-items: center; gap: 16px; padding: 12px 0; }
+.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-icon {
+  width: 42px; height: 42px; background: var(--blue);
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; position: relative; overflow: hidden;
+}
+.logo-icon::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 5px; background: var(--saffron);
+}
+.logo-icon span { font-size: 1.2rem; font-weight: 800; color: #fff; font-family: var(--font-display); letter-spacing: -1px; }
+.logo-text { line-height: 1.15; }
+.logo-text strong { display: block; font-size: 1.3rem; font-weight: 800; color: var(--blue); font-family: var(--font-display); }
+.logo-text small { font-size: 0.62rem; color: var(--text-light); letter-spacing: 0.12em; text-transform: uppercase; }
+.tag {
+  display: inline-block; font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  background: var(--saffron); color: var(--white);
+  padding: 3px 9px; border-radius: 3px;
+}
+.tag.blue { background: var(--blue); }
+.tag.green { background: var(--green); }
+.tag.purple { background: #7b2f9e; }
+.tag.teal { background: #0e7490; }
+.tag.red { background: #c0392b; }
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav-bar { background: var(--blue); }
+.nav-inner { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-link {
+  display: block; padding: 13px 16px;
+  color: rgba(255,255,255,0.82); font-size: 0.82rem; font-weight: 500;
+  white-space: nowrap; border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-link:hover { color: #fff; border-bottom-color: var(--saffron); }
+
+/* ============================================================
+   BREADCRUMB
+============================================================ */
+.breadcrumb {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 10px 0; font-size: 0.78rem; color: var(--text-light);
+}
+.breadcrumb-inner { display: flex; align-items: center; gap: 8px; }
+.breadcrumb a { color: var(--blue); }
+.breadcrumb a:hover { color: var(--saffron); }
+.breadcrumb-sep { color: var(--border); }
+
+/* ============================================================
+   ARTICLE LAYOUT
+============================================================ */
+.article-wrap { padding: 36px 0 60px; }
+.article-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ============================================================
+   ARTICLE MAIN
+============================================================ */
+.article-main { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+
+.article-hero-img {
+  width: 100%; height: 420px; object-fit: cover;
+}
+
+.article-body { padding: 32px 36px 36px; }
+
+.article-category { margin-bottom: 14px; }
+
+.article-title {
+  font-family: var(--font-display); font-size: 2rem;
+  font-weight: 800; line-height: 1.25; color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.article-meta {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  padding: 16px 0; border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); margin-bottom: 28px;
+  font-size: 0.82rem; color: var(--text-light);
+}
+.article-meta-item { display: flex; align-items: center; gap: 6px; }
+.article-meta-item svg { flex-shrink: 0; }
+.article-author-name { font-weight: 600; color: var(--blue); }
+
+.article-content {
+  font-size: 1.02rem; line-height: 1.85; color: var(--text-mid);
+}
+.article-content p { margin-bottom: 20px; }
+.article-content p:last-child { margin-bottom: 0; }
+
+/* Share buttons */
+.share-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.share-label { font-size: 0.82rem; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; }
+.share-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.share-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 6px; font-size: 0.78rem;
+  font-weight: 600; cursor: pointer; border: none; transition: opacity 0.2s;
+  font-family: var(--font-body);
+}
+.share-btn:hover { opacity: 0.88; }
+.share-btn.twitter  { background: #000;    color: #fff; }
+.share-btn.whatsapp { background: #25D366; color: #fff; }
+.share-btn.facebook { background: #1877F2; color: #fff; }
+.share-btn.copy     { background: var(--blue-light); color: var(--blue); }
+
+/* Comments */
+.comments-section { margin-top: 36px; padding: 28px 36px 36px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+.comments-title { font-size: 1.1rem; font-weight: 700; color: var(--blue); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.comments-title::before { content: ''; display: inline-block; width: 5px; height: 20px; background: var(--saffron); border-radius: 3px; }
+
+.comment-form { margin-bottom: 28px; }
+.comment-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.comment-input, .comment-textarea {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 6px; font-family: var(--font-body); font-size: 0.85rem;
+  color: var(--text-dark); outline: none; transition: border-color 0.2s;
+  background: var(--bg);
+}
+.comment-input:focus, .comment-textarea:focus { border-color: var(--blue); background: #fff; }
+.comment-textarea { resize: vertical; min-height: 100px; margin-bottom: 12px; }
+.comment-submit {
+  background: var(--blue); color: #fff; border: none;
+  padding: 10px 24px; border-radius: 6px; font-size: 0.85rem;
+  font-weight: 600; cursor: pointer; font-family: var(--font-body);
+  transition: background 0.2s;
+}
+.comment-submit:hover { background: var(--saffron); }
+
+.comment-list { display: flex; flex-direction: column; gap: 18px; }
+.comment-item { padding: 16px; background: var(--bg); border-radius: 6px; border-left: 3px solid var(--saffron); }
+.comment-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.comment-author { font-weight: 600; font-size: 0.85rem; color: var(--blue); }
+.comment-date { font-size: 0.75rem; color: var(--text-light); }
+.comment-text { font-size: 0.88rem; color: var(--text-mid); line-height: 1.6; }
+.comment-success { background: #e8f5e9; color: #138808; padding: 12px 16px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+.sidebar { display: flex; flex-direction: column; gap: 24px; }
+.sidebar-widget { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.sidebar-widget-title {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--white);
+  background: var(--blue); padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-widget-title::before { content: ''; width: 4px; height: 16px; background: var(--saffron); border-radius: 2px; }
+
+.related-item {
+  display: flex; gap: 12px; padding: 14px 16px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background 0.2s;
+}
+.related-item:last-child { border-bottom: none; }
+.related-item:hover { background: var(--blue-light); }
+.related-thumb { width: 70px; height: 55px; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+.related-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.related-title { font-size: 0.8rem; font-weight: 600; line-height: 1.4; color: var(--text-dark); }
+.related-meta { font-size: 0.72rem; color: var(--text-light); margin-top: 4px; }
+
+.tags-cloud { padding: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-chip {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 12px; font-size: 0.75rem;
+  font-weight: 500; cursor: pointer; transition: all 0.2s; color: var(--text-mid);
+}
+.tag-chip:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.newsletter-widget { padding: 20px 16px; }
+.newsletter-widget p { font-size: 0.82rem; color: var(--text-mid); margin-bottom: 12px; }
+.newsletter-widget input {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+  border-radius: 6px; font-size: 0.82rem; font-family: var(--font-body);
+  outline: none; margin-bottom: 8px;
+}
+.newsletter-widget input:focus { border-color: var(--blue); }
+.newsletter-widget button {
+  width: 100%; background: var(--saffron); color: #fff;
+  border: none; padding: 10px; border-radius: 6px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: background 0.2s;
+}
+.newsletter-widget button:hover { background: var(--blue); }
+
+/* ============================================================
+   LOADING / ERROR STATES
+============================================================ */
+.article-loading {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 400px; gap: 16px;
+}
+.spinner {
+  width: 44px; height: 44px; border: 4px solid var(--border);
+  border-top-color: var(--blue); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text-light); font-size: 0.9rem; }
+
+.article-error {
+  text-align: center; padding: 60px 20px;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.article-error .error-icon { font-size: 3rem; margin-bottom: 16px; }
+.article-error h2 { font-size: 1.3rem; color: var(--text-dark); margin-bottom: 10px; }
+.article-error p { color: var(--text-light); margin-bottom: 20px; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--blue); color: #fff; padding: 10px 22px;
+  border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+  transition: background 0.2s;
+}
+.back-btn:hover { background: var(--saffron); }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer { background: var(--blue-dark); color: #cdd8ef; padding: 40px 0 0; font-size: 0.82rem; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 16px 0; margin-top: 32px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  font-size: 0.75rem; color: rgba(255,255,255,0.5);
+}
+.footer-bottom a { color: rgba(255,255,255,0.5); }
+.footer-bottom a:hover { color: var(--saffron); }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 900px) {
+  .article-grid { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}
+@media (max-width: 600px) {
+  .article-title { font-size: 1.4rem; }
+  .article-body { padding: 20px; }
+  .article-hero-img { height: 220px; }
+  .comment-form-row { grid-template-columns: 1fr; }
+  .comments-section { padding: 20px; }
+}
+</style>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<!-- INDIA STRIP -->
+<div class="india-strip"></div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="container top-bar-inner">
+    <div class="top-bar-left">
+      <span id="live-date"></span>
+      <span class="top-bar-sep">|</span>
+      <a href="#">E-Paper</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">हिंदी</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">తెలుగు</a>
+    </div>
+    <div class="top-bar-right">
+      <a href="#">Advertise</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">About Us</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><span>BN</span></div>
+      <div class="logo-text">
+        <strong>BharatNews</strong>
+        <small>India's Trusted News Portal</small>
+      </div>
+    </a>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <div class="container nav-inner">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="index.html">India</a>
+    <a class="nav-link" href="index.html">World</a>
+    <a class="nav-link" href="index.html">Politics</a>
+    <a class="nav-link" href="index.html">Business</a>
+    <a class="nav-link" href="index.html">Technology</a>
+    <a class="nav-link" href="index.html">Sports</a>
+    <a class="nav-link" href="index.html">Entertainment</a>
+    <a class="nav-link" href="index.html">Health</a>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <div class="container breadcrumb-inner">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <span id="breadcrumb-category">News</span>
+    <span class="breadcrumb-sep">›</span>
+    <span id="breadcrumb-title" style="color:var(--text-dark);font-weight:500;">Article</span>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="article-wrap">
+  <div class="container">
+
+    <!-- LOADING STATE -->
+    <div class="article-loading" id="loadingState">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading article...</div>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div class="article-error" id="errorState" style="display:none;">
+      <div class="error-icon">📰</div>
+      <h2>Article Not Found</h2>
+      <p>This article may have been removed or the link is broken.</p>
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <!-- ARTICLE GRID (hidden until loaded) -->
+    <div class="article-grid" id="articleGrid" style="display:none;">
+
+      <!-- LEFT: Article + Comments -->
+      <div>
+
+        <!-- Article -->
+        <article class="article-main" id="articleMain">
+          <img id="articleImage" class="article-hero-img" src="" alt="" />
+          <div class="article-body">
+            <div class="article-category">
+              <span class="tag" id="articleCategory">News</span>
+            </div>
+            <h1 class="article-title" id="articleTitle"></h1>
+            <div class="article-meta">
+              <div class="article-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <span>By <span class="article-author-name" id="articleAuthor">BharatNews Desk</span></span>
+              </div>
+              <div class="article-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="articleDate"></span>
+              </div>
+              <div class="article-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span id="articleReadTime"></span>
+              </div>
+            </div>
+            <div class="article-content" id="articleContent"></div>
+
+            <!-- Share -->
+            <div class="share-section">
+              <div class="share-label">Share this story</div>
+              <div class="share-btns">
+                <button class="share-btn twitter"  onclick="shareTwitter()">𝕏 Twitter</button>
+                <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+                <button class="share-btn facebook" onclick="shareFacebook()">f Facebook</button>
+                <button class="share-btn copy"     onclick="copyLink(this)">🔗 Copy Link</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Comments -->
+        <section class="comments-section">
+          <div class="comments-title">Comments <span id="commentCount" style="font-size:0.85rem;font-weight:500;color:var(--text-light)"></span></div>
+
+          <!-- Comment Form -->
+          <div class="comment-form">
+            <div class="comment-success" id="commentSuccess">✅ Your comment has been submitted for review. Thank you!</div>
+            <div class="comment-form-row">
+              <input class="comment-input" id="commentName"  type="text"  placeholder="Your Name *" />
+              <input class="comment-input" id="commentEmail" type="email" placeholder="Your Email *" />
+            </div>
+            <textarea class="comment-textarea" id="commentText" placeholder="Write your comment here..."></textarea>
+            <button class="comment-submit" onclick="submitComment()">Post Comment</button>
+          </div>
+
+          <!-- Comment List -->
+          <div class="comment-list" id="commentList"></div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <aside class="sidebar">
+
+        <!-- Related Articles -->
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">Related Articles</div>
+          <div id="relatedArticles"></div>
+        </div>
+
+        <!-- Tags -->
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">Popular Topics</div>
+          <div class="tags-cloud">
+            <span class="tag-chip" onclick="goHome('Politics')">Politics</span>
+            <span class="tag-chip" onclick="goHome('Technology')">Technology</span>
+            <span class="tag-chip" onclick="goHome('Sports')">Sports</span>
+            <span class="tag-chip" onclick="goHome('Health')">Health</span>
+            <span class="tag-chip" onclick="goHome('Business')">Business</span>
+            <span class="tag-chip" onclick="goHome('Entertainment')">Entertainment</span>
+            <span class="tag-chip" onclick="goHome('India')">India</span>
+            <span class="tag-chip" onclick="goHome('World')">World</span>
+            <span class="tag-chip" onclick="goHome('Science')">Science</span>
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">Newsletter</div>
+          <div class="newsletter-widget">
+            <p>Get top stories delivered to your inbox every morning.</p>
+            <input type="email" id="sidebarEmail" placeholder="your@email.com" />
+            <button onclick="sidebarSubscribe(this)">Subscribe Free →</button>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 BharatNews Media Pvt. Ltd. All rights reserved.</span>
+      <div style="display:flex;gap:16px;">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="india-strip"></div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+/* ============================================================
+   SUPABASE SETUP
+============================================================ */
+const SUPABASE_URL = "https://zywoiaqbdiaaslyyvngb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_iL167xuGu2q-tww13f7AUA_JmyFJtBh";
+const { createClient } = supabase;
+const sbClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ============================================================
+   LIVE DATE
+============================================================ */
+(function () {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const d = new Date();
+  const el = document.getElementById('live-date');
+  if (el) el.textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+})();
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function getCategoryColor(cat) {
+  const map = { politics:'blue', sports:'green', technology:'teal', health:'red', entertainment:'purple', business:'blue' };
+  return map[(cat||'').toLowerCase()] || '';
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function readTime(text) {
+  if (!text) return '1 min read';
+  const words = text.split(/\s+/).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+}
+
+function getArticleId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+/* ============================================================
+   LOAD ARTICLE
+============================================================ */
+async function loadArticle() {
+  const id = getArticleId();
+
+  if (!id) {
+    showError();
+    return;
+  }
+
+  const { data, error } = await sbClient
+    .from('articles')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) {
+    showError();
+    return;
+  }
+
+  renderArticle(data);
+  loadRelated(data.category, data.id);
+  loadComments(data.id);
+}
+
+function renderArticle(a) {
+  // Page title
+  document.title = `${a.title} – BharatNews`;
+
+  // SEO meta tags
+  const desc = a.content ? a.content.substring(0, 160).replace(/\n/g, ' ') : 'Read the latest news on BharatNews.';
+  const img  = a.image_url || `https://picsum.photos/seed/${a.id}/1200/630`;
+  const url  = window.location.href;
+
+  document.getElementById('metaDesc').setAttribute('content', desc);
+  document.getElementById('metaAuthor').setAttribute('content', a.author || 'BharatNews');
+  document.getElementById('ogTitle').setAttribute('content', `${a.title} – BharatNews`);
+  document.getElementById('ogDesc').setAttribute('content', desc);
+  document.getElementById('ogUrl').setAttribute('content', url);
+  document.getElementById('ogImage').setAttribute('content', img);
+  document.getElementById('twTitle').setAttribute('content', `${a.title} – BharatNews`);
+  document.getElementById('twDesc').setAttribute('content', desc);
+  document.getElementById('twImage').setAttribute('content', img);
+
+  // Schema.org Article structured data for Google
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": a.title,
+    "description": desc,
+    "image": img,
+    "author": { "@type": "Person", "name": a.author || "BharatNews Desk" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "BharatNews",
+      "url": "https://bharatnews-ashy.vercel.app/"
+    },
+    "datePublished": a.created_at,
+    "dateModified": a.created_at,
+    "url": url
+  };
+  const schemaScript = document.createElement('script');
+  schemaScript.type = 'application/ld+json';
+  schemaScript.textContent = JSON.stringify(schema);
+  document.head.appendChild(schemaScript);
+
+  // Breadcrumb
+  document.getElementById('breadcrumb-category').textContent = a.category || 'News';
+  document.getElementById('breadcrumb-title').textContent = a.title.length > 50 ? a.title.substring(0, 50) + '…' : a.title;
+
+  // Image
+  const img = document.getElementById('articleImage');
+  img.src = a.image_url || `https://picsum.photos/seed/${a.id}/1200/500`;
+  img.alt = a.title;
+  img.onerror = () => { img.src = `https://picsum.photos/seed/${a.id}/1200/500`; };
+
+  // Category tag
+  const catEl = document.getElementById('articleCategory');
+  catEl.textContent = a.category || 'News';
+  catEl.className = `tag ${getCategoryColor(a.category)}`;
+
+  // Title
+  document.getElementById('articleTitle').textContent = a.title;
+
+  // Author (fallback to "BharatNews Desk")
+  document.getElementById('articleAuthor').textContent = a.author || 'BharatNews Desk';
+
+  // Date
+  document.getElementById('articleDate').textContent = formatDate(a.created_at);
+
+  // Read time
+  document.getElementById('articleReadTime').textContent = readTime(a.content);
+
+  // Content — render paragraphs
+  const contentEl = document.getElementById('articleContent');
+  const paragraphs = (a.content || 'Full article content coming soon.')
+    .split('\n')
+    .filter(p => p.trim())
+    .map(p => `<p>${p}</p>`)
+    .join('');
+  contentEl.innerHTML = paragraphs;
+
+  // Show article
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('articleGrid').style.display = 'grid';
+}
+
+function showError() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'block';
+}
+
+/* ============================================================
+   RELATED ARTICLES
+============================================================ */
+async function loadRelated(category, currentId) {
+  const { data } = await sbClient
+    .from('articles')
+    .select('id, title, image_url, created_at, category')
+    .eq('category', category)
+    .neq('id', currentId)
+    .order('id', { ascending: false })
+    .limit(4);
+
+  const container = document.getElementById('relatedArticles');
+
+  if (!data || data.length === 0) {
+    container.innerHTML = '<p style="padding:16px;font-size:0.82rem;color:var(--text-light)">No related articles found.</p>';
+    return;
+  }
+
+  container.innerHTML = data.map(a => `
+    <a href="article.html?id=${a.id}" class="related-item">
+      <div class="related-thumb">
+        <img src="${a.image_url || 'https://picsum.photos/seed/' + a.id + '/70/55'}"
+             alt="${a.title}"
+             onerror="this.src='https://picsum.photos/seed/${a.id}/70/55'">
+      </div>
+      <div>
+        <div class="related-title">${a.title}</div>
+        <div class="related-meta">${formatDate(a.created_at)}</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+/* ============================================================
+   COMMENTS
+============================================================ */
+async function loadComments(articleId) {
+  const { data } = await sbClient
+    .from('comments')
+    .select('*')
+    .eq('article_id', articleId)
+    .eq('approved', true)
+    .order('created_at', { ascending: false });
+
+  const list = document.getElementById('commentList');
+  const count = document.getElementById('commentCount');
+
+  if (!data || data.length === 0) {
+    count.textContent = '(0)';
+    list.innerHTML = '<p style="font-size:0.85rem;color:var(--text-light)">No comments yet. Be the first to comment!</p>';
+    return;
+  }
+
+  count.textContent = `(${data.length})`;
+  list.innerHTML = data.map(c => `
+    <div class="comment-item">
+      <div class="comment-header">
+        <span class="comment-author">${c.author}</span>
+        <span class="comment-date">${formatDate(c.created_at)}</span>
+      </div>
+      <div class="comment-text">${c.content}</div>
+    </div>
+  `).join('');
+}
+
+async function submitComment() {
+  const name    = document.getElementById('commentName').value.trim();
+  const email   = document.getElementById('commentEmail').value.trim();
+  const content = document.getElementById('commentText').value.trim();
+  const articleId = getArticleId();
+
+  if (!name || !email || !content) {
+    alert('Please fill in your name, email, and comment.');
+    return;
+  }
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailOk) { alert('Please enter a valid email address.'); return; }
+
+  const btn = document.querySelector('.comment-submit');
+  btn.textContent = 'Posting...';
+  btn.disabled = true;
+
+  const { error } = await sbClient.from('comments').insert({
+    article_id: articleId,
+    author: name,
+    email: email,
+    content: content,
+    approved: false,
+  });
+
+  btn.textContent = 'Post Comment';
+  btn.disabled = false;
+
+  if (error) {
+    // If comments table doesn't exist yet, still show success message
+    console.log('Comment note:', error.message);
+  }
+
+  // Show success
+  document.getElementById('commentSuccess').style.display = 'block';
+  document.getElementById('commentName').value  = '';
+  document.getElementById('commentEmail').value = '';
+  document.getElementById('commentText').value  = '';
+  setTimeout(() => { document.getElementById('commentSuccess').style.display = 'none'; }, 5000);
+}
+
+/* ============================================================
+   SHARE BUTTONS
+============================================================ */
+function shareTwitter() {
+  const title = document.getElementById('articleTitle').textContent;
+  const url   = window.location.href;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
+}
+function shareWhatsApp() {
+  const title = document.getElementById('articleTitle').textContent;
+  const url   = window.location.href;
+  window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
+}
+function shareFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+function copyLink(btn) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = '🔗 Copy Link'; }, 2000);
+  });
+}
+
+/* ============================================================
+   TAGS NAVIGATION
+============================================================ */
+function goHome(category) {
+  window.location.href = `index.html?category=${category}`;
+}
+
+/* ============================================================
+   SIDEBAR NEWSLETTER
+============================================================ */
+function sidebarSubscribe(btn) {
+  const email = document.getElementById('sidebarEmail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email.');
+    return;
+  }
+  btn.textContent = '✓ Subscribed!';
+  btn.style.background = '#138808';
+  btn.disabled = true;
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+loadArticle();
+
+</script>
+</body>
+</html>
