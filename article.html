@@ -349,6 +349,12 @@ ul { list-style: none; }
   <div class="container top-bar-inner">
     <div class="top-bar-left">
       <span id="live-date"></span>
+      <span class="top-bar-sep">|</span>
+      <a href="#">E-Paper</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">हिंदी</a>
+      <span class="top-bar-sep">|</span>
+      <a href="#">తెలుగు</a>
     </div>
     <div class="top-bar-right">
       <a href="#">Advertise</a>
@@ -412,8 +418,8 @@ ul { list-style: none; }
     <!-- ERROR STATE -->
     <div class="article-error" id="errorState" style="display:none;">
       <div class="error-icon">📰</div>
-      <h2>Article Not Found</h2>
-      <p>This article may have been removed or the link is broken.</p>
+      <h2>Article Could Not Load</h2>
+      <p id="errorMsg">This article may have been removed, or there may be a database connection issue.</p>
       <a href="index.html" class="back-btn">← Back to Home</a>
     </div>
 
@@ -596,20 +602,33 @@ async function loadArticle() {
     return;
   }
 
-  const { data, error } = await sbClient
-    .from('articles')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const { data, error } = await sbClient
+      .from('articles')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error || !data) {
+    if (error) {
+      console.error('Supabase error:', error.message, error.details);
+      showError();
+      return;
+    }
+
+    if (!data) {
+      console.error('No article found for id:', id);
+      showError();
+      return;
+    }
+
+    renderArticle(data);
+    loadRelated(data.category, data.id);
+    loadComments(data.id);
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
     showError();
-    return;
   }
-
-  renderArticle(data);
-  loadRelated(data.category, data.id);
-  loadComments(data.id);
 }
 
 function renderArticle(a) {
@@ -658,10 +677,10 @@ function renderArticle(a) {
   document.getElementById('breadcrumb-title').textContent = a.title.length > 50 ? a.title.substring(0, 50) + '…' : a.title;
 
   // Image
-  const img = document.getElementById('articleImage');
-  img.src = a.image_url || `https://picsum.photos/seed/${a.id}/1200/500`;
-  img.alt = a.title;
-  img.onerror = () => { img.src = `https://picsum.photos/seed/${a.id}/1200/500`; };
+  const imgEl = document.getElementById('articleImage');
+  imgEl.src = a.image_url || `https://picsum.photos/seed/${a.id}/1200/500`;
+  imgEl.alt = a.title;
+  imgEl.onerror = () => { imgEl.src = `https://picsum.photos/seed/${a.id}/1200/500`; };
 
   // Category tag
   const catEl = document.getElementById('articleCategory');
